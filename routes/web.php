@@ -4,14 +4,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\LogoutController;
 
-Route::get('/', [HomeController::class, 'index'])->name('produtos.home');
 
-Route::controller(LoginController::class)->group(function() {
-    Route::get('/login', 'index')->name('login.index');
-    Route::post('/login', 'store')->name('login.store');
-    Route::get('/logout', 'destroy')->name('login.destroy');
-});
+Route::get('/', [HomeController::class, 'index']);
+
+Route::get('home', [HomeController::class, 'index']);
 
 Route::get('/produtos',[ProdutoController::class, 'lista'])->name('produtos.lista');
 
@@ -28,3 +27,19 @@ Route::get('/produtos/remove/{id}', [ProdutoController::class, 'remove'])->name(
 Route::get('/produtos/edita/{id}', [ProdutoController::class, 'edita'])->name('produto.edita');
 
 Route::post('/produtos/altera/{id}', [ProdutoController::class, 'altera'])->name('produto.altera')->where('id', '[0-9]+');
+
+Route::get('/register', [RegisterController::class,'create'])->name('register');
+
+Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
+
+Route::get('login', [LoginController::class, 'create'])->name('login');
+
+Route::post('login', [LoginController::class, 'store'])->name('login.store');
+
+Route::post('/logout', [LogoutController::class,'__invoke'])->name('logout');
+
+Route::get('/home', function() {
+    return view('/home');
+});
+
+
