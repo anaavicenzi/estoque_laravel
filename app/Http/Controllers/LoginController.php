@@ -2,40 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    public function index()
+
+    public function create()
     {
         return view("produto.login");
     }
 
-    public function store(Request $request)
+
+    public function store(LoginRequest $request)
     {
-        $request->validate([
-            'email'=> 'required|email',
-            'password'=> 'required'
-        ], [
-            'email.required'=> 'O campo email é obrigatório',
-            'email.email'=> 'Esse campo deve conter um email válido',
-            'password.required'=>'O campo password é obrigatório',
-        ]);
-
-        $credentials = $request->only('email','password');
-        $authenticated = Auth::attempt([$credentials]);
-
-        if(!$authenticated) {
-            return redirect()->route('login.index')->withErrors(['error' => 'Email ou senha inválidos']);
-        }
-
-        return redirect()->route('produtos.lista')->with('success','Logged in');
+        if (Auth::attempt($request->only("email","password"))) {
+            return redirect()->intended('/home');
     }
 
-    public function destroy()
-    {
-        Auth::logout();
-        return redirect()->route('login.index');
+
+        return back()->withErrors([
+            'email' => 'Email ou senha incorretos.',
+        ]);
     }
 }
